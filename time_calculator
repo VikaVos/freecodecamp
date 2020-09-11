@@ -1,0 +1,135 @@
+
+def add_time(start, duration, *weekday):
+
+    weekdays= ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    weekday="".join(weekday)
+    weekday=weekday.lower()
+    weekday=weekday.capitalize()
+    
+    start=start.split (":")
+    
+    hour =start[0]
+    minute=start[1]
+    minute=minute.split(" ")     ##### PM & AM
+   
+    duration=duration.split (":")
+    dur_hour=duration[0]
+    dur_minute=duration[1]
+
+    
+    nextday=  int(hour) + int(dur_hour)             
+    res_hour= int(hour) + int(dur_hour)
+    days=res_hour//24
+    
+          
+    res_minute= int(minute[0]) + int(dur_minute)
+    if res_minute > 60 : 
+      res_minute = res_minute - 60
+      res_hour+=1
+
+    
+    while res_hour >13 : 
+        res_hour = res_hour- 12
+          
+        if minute[1]== "PM":
+            minute[1]= "AM"
+            if  weekday:
+                for i in range(len(weekdays)):
+                    if weekday in weekdays[i]:
+                        a=i+1
+                weekday_calc=[weekdays[i%len(weekdays)] for i in range(a, a+days+1)]
+                
+                    
+                if len(weekday_calc)>=2:
+                    week_day_change=weekday_calc[-1]
+                elif len(weekday_calc)==1:
+                    week_day_change=weekday_calc[0]
+
+                    
+        elif minute[1]== "AM":
+            minute[1]= "PM"
+            if  weekday:
+                for i in range(len(weekdays)):
+                    if weekday in weekdays[i]:
+                        a=i+1
+                weekday_calc=[weekdays[i%len(weekdays)] for i in range(a, a+days+1)]
+                                    
+                if len(weekday_calc)>=2:
+                    week_day_change=weekday_calc[-1]
+                elif len(weekday_calc)==1:
+                    week_day_change=weekday_calc[0]
+            
+    if res_hour == 12:
+        if minute[1]== "PM":
+            minute[1]= "AM"
+            if  weekday:
+                for i in range(len(weekdays)):
+                    if weekday in weekdays[i]:
+                        a=i+1
+                weekday_calc=[weekdays[i%len(weekdays)] for i in range(a, a+days+1)]
+                if len(weekday_calc)>=2:
+                    week_day_change=weekday_calc[-1]
+                elif len(weekday_calc)==1:
+                    week_day_change=weekday_calc[0]
+        elif minute[1]== "AM":
+            minute[1]= "PM"
+
+
+    
+    
+    res_minute="{:02}".format(res_minute)
+    hour_min_ampm = str(res_hour) + ":" + str(res_minute) + " " + minute [1]
+     
+
+  
+    if int(days)>=1 and nextday >= 35 and weekday: #and minute[1]== "AM":
+        days = days + 1
+        days=str(days)
+        days = " (" + str(days) + " days later)"
+        return hour_min_ampm  + ", " + week_day_change + "" +str(days)
+    elif int(days)>=1 and nextday >= 35:
+        days = days + 1
+        days=str(days)
+        days = " (" + str(days) + " days later)"
+        return hour_min_ampm + "" + str(days)
+
+    
+    if int(days) == 1 and  nextday < 35 and minute[1]== "AM" and weekday:
+        week_day_change=weekday_calc[-2]
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm  + ", " + week_day_change + "" +str(days)
+    elif int(days) == 1 and  nextday < 35 and minute[1]== "AM":
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm + "" + str(days)
+
+        
+
+    if int(days)==0 and nextday > 12 and minute[1]== "PM" and weekday:
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm + "" +  week_day_change
+    elif int(days)==0 and nextday > 12 and minute[1]== "PM":
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm 
+
+        
+    if int(days)==0 and nextday > 12 and minute[1]== "AM" and weekday:
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm + "," + week_day_change + "" +str(days)
+    elif int(days)==0 and nextday > 12 and minute[1]== "AM":
+        days=str(days)
+        days = " (next day)"
+        return hour_min_ampm + "" + str(days)
+
+    
+    if int(days)==0 and nextday < 12  and weekday:
+        week_day_change=str(weekday)
+        days=str(days)
+        return hour_min_ampm + ", " + week_day_change
+    elif int(days)==0 and nextday < 12:
+        days=str(days)
+        return hour_min_ampm
