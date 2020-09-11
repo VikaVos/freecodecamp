@@ -1,0 +1,184 @@
+class Category:
+    def __init__(self, name):
+        self.name = name
+        self.ledger=list()
+        self.balance=0
+        
+        
+    def deposit(self, amount, description=""):
+        self.balance = self.balance + amount
+        if description:
+            self.ledger.append ({"amount" : amount, "description":description })
+        else:
+             self.ledger.append ({"amount" : amount, "description":""})
+            
+        
+
+    def check_funds (self, amount):
+        if amount <= self.balance:
+            
+            return  True
+        else:
+            return  False
+        
+        
+
+    def withdraw (self, amount, description=""):
+        if self.check_funds(amount) == True:
+            self.balance =self.balance - amount
+            if description:
+                self.ledger.append ({"amount" : (amount*-1), "description": description })
+            else:
+                self.ledger.append ({"amount" : amount*-1, "description":""})
+           
+            return True
+                
+        else:
+            return False
+
+
+
+    def transfer (self, amount, category):
+        if self.check_funds(amount) == True:
+            
+            self.withdraw (amount, "Transfer to " + category.name )
+            category.deposit (amount,  f"Transfer from " + self.name )
+            
+            return True
+                
+        else:
+            return  False
+
+    def get_balance (self):
+        get_balance_remaining = self.balance
+        
+        return get_balance_remaining
+
+    def withdrawals_for_chart (self):
+        withdrawals=0
+        for amount in self.ledger:
+            if amount['amount'] <0:
+                withdrawals=withdrawals + amount['amount']
+        
+        return withdrawals
+        
+
+
+    def __str__ (self):
+        title=self.name
+        fix_title= int((30-len(title))/2)
+        fix_title2= int((30-len(title))-fix_title)
+        title=("*"*fix_title + title + "*"*fix_title2)
+        
+        
+        result =[(d['description'],  '{:.2f}'.format(d['amount']))  for d in self.ledger]
+        result=[list(l) for l in result]
+        
+        final_res=[]
+        for i in result:
+            for y in i:
+                k=i[0]
+                m=i[1]
+               
+                len1=len(i[0])
+                len2=len(i[1])
+                maxlen=30-len1-len2
+                
+            if len1 + len2 > 30:
+                if len(k) >23:
+                    k=k[:23]
+                elif len(m) >7:
+                    m=m[0:7]
+                    
+                maxlen=30-len(k)-len(m)    
+                k= [k + " "*maxlen+ m ]
+                final_res.append(k)
+                
+            else: # len1 + len2 < 30:
+                
+                k= [k + " "*maxlen+ m ]
+                final_res.append(k)
+        
+                
+        
+        final_output=[item for sublist in final_res for item in sublist]
+        final_output.insert(0, title)   
+        total = self.get_balance()
+        total = "Total: " + str(total)
+        final_output.append(total)
+
+        chart=("\n".join([str(i) for i in final_output]))
+        return chart
+       
+
+def create_spend_chart(categories):
+    res="Percentage spent by category"
+    categ_names=[]
+    total_withdraw=0
+    round_perc=list()
+    for count_percent in categories:
+        total_withdraw= total_withdraw + count_percent.withdrawals_for_chart()
+        
+    for count_percent in categories:
+        percent=count_percent.withdrawals_for_chart()/total_withdraw
+        round_perc.append( int( (percent // .1)*10 ) )
+    
+    i=100
+    
+    while i >=0:
+        res+="\n"
+        add_o_zero=" "
+        for y in round_perc:
+            if y >=i:
+                add_o_zero+="o  "
+            else:
+                add_o_zero+="   "
+        res +=  str(i).rjust(3) + "|" + add_o_zero 
+        i=i-10
+    adding_lines="\n" + "    -" + "---"*len(categories) 
+    res = res+adding_lines 
+
+    for title in categories:
+        title=title.name
+        categ_names.append(title)
+       
+    for i in range(len(categ_names)):
+        for j in range(len(categ_names[i])):
+                maxlen=max(len(x) for x in categ_names)
+                    
+    i =0
+    while i < maxlen: 
+        res += "\n" + " "*5
+        for cat in categories:
+            try: res += cat.name[i] + " "*2
+            except: res += " "*3
+             
+
+        i += 1
+        
+    return ( res)
+
+
+
+
+food=Category("Food")
+clothing=Category("Clothing")
+
+
+
+food.deposit(1000, "initial deposit")
+food.withdraw(10.15, "groceries")
+food.withdraw(15.89, "restaurant and more food for dessert")
+#print(food.get_balance())
+
+food.transfer(50, clothing)
+clothing.withdraw(25.55)
+clothing.withdraw(100)
+auto =Category("Auto")
+auto.deposit(1000, "initial deposit")
+auto.withdraw(15)
+
+print(food)
+print(clothing)
+
+print(create_spend_chart([food, clothing, auto]))
