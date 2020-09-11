@@ -1,0 +1,54 @@
+import random
+import copy
+
+class Hat:
+  
+    def __init__(self, **cases):
+        contents=[]
+        
+        self.cases=cases
+        for k, v in self.cases.items():
+            i=0
+            while i < v:
+                contents.append(k)
+                i=i+1
+            
+        self.contents=contents
+        
+
+    
+    def draw(self, num):
+        rand_res = []
+        import random
+
+        if num >= len(self.contents):
+          return self.contents
+
+        
+        for i in range(num):
+          rand_play = random.choice(self.contents)
+          rand_res.append(rand_play)
+          self.contents.pop(self.contents.index(rand_play))
+        
+        return ( rand_res)
+                   
+                    
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
+  
+  count = 0
+
+  for i in range(num_experiments):
+    hat_copy = copy.deepcopy(hat)
+    draw_ = hat_copy.draw(num_balls_drawn)
+
+    func_draw = {ball: draw_.count(ball) for ball in set(draw_)}
+        
+
+    for i, j in expected_balls.items():
+      if i not in func_draw or func_draw[i] < expected_balls[i]:
+        break
+    else:
+      count += 1
+
+  return count/num_experiments
+            
