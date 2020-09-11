@@ -1,0 +1,124 @@
+
+### working -- 1 
+problems=["32 + 6988", "398 + 698", "54 - 5", "789 - 23" ]
+def arithmetic_arranger (problems, *args):
+    check_list=[]
+    check_list = [sublist.split(" " ) for sublist in problems]
+    
+
+    operations = ["#", "$", "%", "^", "&", "*", "(", ")", "/"]
+    if len(problems) >5:
+        return "Error: Too many problems."
+    for x in check_list:
+        for y in x:
+            for j in operations:
+                if y == j:
+                    return ("Error: Operator must be '+' or '-'.")
+            if not y.isnumeric() and not y=="+"and not y=="-" :
+                return ("Error: Numbers must only contain digits.")
+           
+            if len(y) >4:
+                return ("Error: Numbers cannot be more than four digits.")
+            
+    output_temp=[]
+    output_results=[]
+    final_output=[]
+    problems= [char.split (",") for char in problems]
+    
+    for i in problems:
+        for j in i:
+            j=eval(j)
+            output_temp.append(j)
+    for i in output_temp:
+        i=str(i)
+        output_results.append(i)
+    
+    final_output=[char.split (",") for char in output_results]
+    
+    res=[sublist[0].split(" " ) for sublist in problems]
+    
+    
+    num_length=[]
+    
+    for i in res:
+        for item in i:
+            
+            maxlen=max(len(item) for item in i)
+            leng=maxlen- len(item)
+            if len(item) <= maxlen:
+                if item == "+":
+                    item = ["+"*0 + item]
+                    num_length.append(item)
+                elif item == "-":
+                    item = ["-"*0 + item]
+                    num_length.append(item)
+                else:                
+                    item= [" "*leng + item]
+                    num_length.append(item)
+    num_length2= [item for elem in num_length for item in elem]
+
+    num_length2 = [num_length2[x:x+3] for x in range(0, len(num_length2) -2,3)]
+ 
+    for j in num_length2:
+        j[1]= ' '.join(j[1:])
+            
+    
+    temp=[]
+    for i in num_length2:
+        temp.append(i[0:2])
+    
+    for i in temp:
+        i.append("-")
+    temp=[a + b for a, b in zip(temp, final_output)]
+    res2=[]
+    for i in temp:
+        for item in i:
+            maxlen=max(len(item) for item in i)
+            leng=maxlen- len(item)
+            if len(item) <= maxlen:
+                if item == "-":
+                    item = ["-"*leng + item]
+                    res2.append(item)
+                else:                
+                    item= [" "*leng + item]
+                    res2.append(item)
+    
+    final_result=[]
+    
+    for x in res2:
+        final_result.extend(x)
+    
+    final_result = [final_result[x:x+4] for x in range(0, len(final_result) -3,4)]
+    i=range(len(final_result))
+             
+    
+    
+    line_1=[]
+    line_2 = []
+    line_3 = []
+    line_4=[]
+    
+    for i  in final_result:
+        for y in i:
+            if y == i[0]:
+                line_1.append(y)
+            if y == i[1]:
+                line_2.append(y)
+            if y == i[2]:
+                line_3.append(y)
+            if y == i[3]:
+             line_4.append(y)
+
+    str1 ="    ".join(line_1)
+    str2 ="    ".join(line_2)
+    str3 ="    ".join(line_3)
+    str4 ="    ".join(line_4)
+    ready_res = str1 + "\n" + str2 + "\n" + str3 
+    ready_res_true= str1 + "\n" + str2 + "\n" + str3 + "\n" + str4 
+    if not args:
+        return ready_res
+    else:
+        return ready_res_true
+    
+
+print (arithmetic_arranger(["32 + 698", "3801 - 2", "45 + 43", "123 + 49"], True))
